@@ -1,0 +1,141 @@
+@startuml BristolWest_Notification_SequenceDiagram
+
+title Bristol West (Farmers Insurance)\nSequence Diagram — Quote Notification Flow\n(After Quote is Published)
+
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+skinparam participant {
+  BackgroundColor   #E6F4EA
+  BorderColor       #2E7D32
+  FontColor         #1B5E20
+  FontStyle         bold
+}
+
+skinparam sequence {
+  ArrowColor              #444444
+  ArrowFontColor          #444444
+  ArrowFontSize           11
+  LifeLineBorderColor     #888888
+  LifeLineBackgroundColor #F9F9F9
+  BoxBackgroundColor      #F5F5F5
+  BoxBorderColor          #CCCCCC
+  DividerBackgroundColor  #FFF3CC
+  DividerBorderColor      #CC9900
+  GroupBackgroundColor    #E8EAF6
+  GroupBorderColor        #283593
+  GroupFontColor          #1A237E
+  NoteBackgroundColor     #FFFDE7
+  NoteBorderColor         #F9A825
+}
+
+skinparam actor {
+  BackgroundColor   #DDEEFF
+  BorderColor       #336699
+  FontColor         #003366
+}
+
+' ─────────────────────────────
+' PARTICIPANTS
+' ─────────────────────────────
+participant "Quote\nService"        as QS   #E6F4EA
+participant "Kafka\nquote-generated\n:9092" as KAFKA #E8EAF6
+participant "Notification\nService" as NS   #E6F4EA
+participant "Email\n(Spring Mail)"  as MAIL #FFF3CC
+participant "SMTP Server"           as SMTP #F3E5F5
+actor       "Customer"              as CUST #DDEEFF
+
+' ─────────────────────────────
+' DIVIDER — starting point
+' ─────────────────────────────
+== Quote Persisted to DB (starting point) ==
+
+' ─────────────────────────────
+' PHASE 1 — Publish Event
+' ─────────────────────────────
+== Phase 1 : Publish Quote Event ==
+
+QS   -> QS   : Build QuoteGeneratedEvent\n(quoteId, quoteNumber, customerName,\ncustomerEmail, coverageType,\ntotalPremium, expiresAt)
+
+QS   -> KAFKA : publish(QuoteGeneratedEvent)\ntopic: quote-generated
+
+note right of KAFKA
+  Message serialized
+  as JSON via
+  KafkaTemplate
+end note
+
+KAFKA --> QS  : ack (offset committed)
+
+QS   -> QS   : Return QuoteResponseDTO\nto API Gateway → Customer
+
+' ─────────────────────────────
+' PHASE 2 — Consume Event
+' ─────────────────────────────
+== Phase 2 : Consume Quote Event ==
+
+KAFKA -> NS  : deliver QuoteGeneratedEvent\n(consumer group: notification-group)
+
+activate NS
+
+NS   -> NS   : Deserialize JSON\nto QuoteGeneratedEvent
+
+NS   -> NS   : Validate event fields\n(email, quoteNumber, premium)
+
+' ─────────────────────────────
+' PHASE 3 — Build & Send Email
+' ─────────────────────────────
+== Phase 3 : Build & Send Email ==
+
+NS   -> MAIL : buildEmailMessage()\n(to: customerEmail,\nsubject: "Your Bristol West Quote is Ready")
+
+note right of NS
+  Email body includes:
+  - Quote Number
+  - Coverage Type
+  - Premium Breakdown
+  - Expiry Date (30 days)
+  - CTA: "View & Accept Quote"
+end note
+
+MAIL -> MAIL : Compose HTML email\nusing template
+
+MAIL -> SMTP : Connect & authenticate\n(host, port, TLS)
+
+SMTP --> MAIL : Connection established
+
+MAIL -> SMTP : Submit email message\n"Your Auto Quote is Ready — BW-YYYY-XXXXXX"
+
+activate CUST
+
+SMTP -> CUST  : Deliver email to inbox
+
+' ─────────────────────────────
+' PHASE 4 — Confirmation
+' ─────────────────────────────
+== Phase 4 : Confirmation ==
+
+CUST --> SMTP : Email delivered
+
+SMTP --> MAIL : 250 OK
+
+MAIL --> NS   : Send success
+
+NS   -> NS   : Log: "Notification sent\nfor quoteId={id}"
+
+deactivate NS
+
+CUST -> CUST : Opens email\nReviews quote summary
+
+deactivate CUST
+
+note over CUST
+  Customer sees:
+  Quote #, Premium,
+  Coverage details &
+  "Accept Quote" link
+end note
+
+@enduml

@@ -1,0 +1,119 @@
+@startuml BristolWest_AutoQuote_ComponentDiagram
+
+title Bristol West (Farmers Insurance)\nAuto Insurance Quotation System — Architecture Overview
+
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam componentStyle rectangle
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam padding 8
+
+skinparam component {
+  BackgroundColor<<frontend>>   #DDEEFF
+  BorderColor<<frontend>>       #336699
+  FontColor<<frontend>>         #003366
+  FontStyle<<frontend>>         bold
+
+  BackgroundColor<<gateway>>    #FFF3CC
+  BorderColor<<gateway>>        #CC9900
+  FontColor<<gateway>>          #664400
+  FontStyle<<gateway>>          bold
+
+  BackgroundColor<<service>>    #E6F4EA
+  BorderColor<<service>>        #2E7D32
+  FontColor<<service>>          #1B5E20
+  FontStyle<<service>>          bold
+
+  BackgroundColor<<registry>>   #F3E5F5
+  BorderColor<<registry>>       #7B1FA2
+  FontColor<<registry>>         #4A148C
+  FontStyle<<registry>>         bold
+
+  BackgroundColor<<messaging>>  #E8EAF6
+  BorderColor<<messaging>>      #283593
+  FontColor<<messaging>>        #1A237E
+  FontStyle<<messaging>>        bold
+
+  BackgroundColor<<external>>   #F5F5F5
+  BorderColor<<external>>       #9E9E9E
+  FontColor<<external>>         #424242
+}
+
+' ─────────────────────────────────────────
+' ACTOR
+' ─────────────────────────────────────────
+actor "Customer" as USER
+
+' ─────────────────────────────────────────
+' COMPONENTS
+' ─────────────────────────────────────────
+[React Frontend\n:3000] <<frontend>>      as FRONTEND
+[API Gateway\n:8080] <<gateway>>          as GATEWAY
+[Eureka Server\n:8761] <<registry>>       as EUREKA
+
+[Customer Service\n:8081] <<service>>     as CUST
+[Vehicle Service\n:8082] <<service>>      as VEH
+[Driver Service\n:8083] <<service>>       as DRV
+[Rating Service\n:8084] <<service>>       as RATING
+[Quote Service\n:8085] <<service>>        as QUOTE
+[Notification Service\n:8086] <<service>> as NOTIF
+
+[Kafka\n:9092] <<messaging>>              as KAFKA
+[SMTP Server] <<external>>                as SMTP
+
+' ─────────────────────────────────────────
+' FLOW
+' ─────────────────────────────────────────
+USER     --> FRONTEND : Get a Quote
+
+FRONTEND --> GATEWAY  : REST (JSON)\nFinal Quote Request
+FRONTEND -[#1565C0,dashed,thickness=2]-> GATEWAY : Real-Time Preview\n(debounced 300ms)
+
+note on link
+  Triggered on Step 3 & Step 4\nuser input changes
+end note
+
+GATEWAY  --> CUST     : /api/customers
+GATEWAY  --> VEH      : /api/vehicles
+GATEWAY  --> DRV      : /api/drivers
+GATEWAY  --> QUOTE    : /api/quotes
+GATEWAY  -[#1565C0,dashed,thickness=2]-> RATING : /api/rating/preview\n(real-time)
+GATEWAY  --> RATING   : /api/rating/calculate\n(final quote)
+
+QUOTE    --> CUST     : Feign
+QUOTE    --> VEH      : Feign
+QUOTE    --> DRV      : Feign
+QUOTE    --> RATING   : Feign (final)
+
+RATING   -[#1565C0,dashed,thickness=2]-> FRONTEND : RatingPreviewDTO\n(price panel update)
+
+QUOTE    --> KAFKA    : publish event
+KAFKA    --> NOTIF    : consume event
+NOTIF    --> SMTP     : send email
+
+GATEWAY  ..> EUREKA   : discovers
+CUST     ..> EUREKA   : registers
+VEH      ..> EUREKA   : registers
+DRV      ..> EUREKA   : registers
+RATING   ..> EUREKA   : registers
+QUOTE    ..> EUREKA   : registers
+NOTIF    ..> EUREKA   : registers
+
+' ─────────────────────────────────────────
+' LEGEND
+' ─────────────────────────────────────────
+legend right
+  |= Symbol                      |= Meaning                         |
+  | -->                          | Runtime call (REST / Feign / Kafka) |
+  | <color:#1565C0>- - -></color>| Real-Time Pricing Preview (debounced) |
+  | ..>                          | Eureka registration               |
+  |<#DDEEFF>                     | React Frontend                   |
+  |<#FFF3CC>                     | API Gateway                      |
+  |<#E6F4EA>                     | Spring Boot Services             |
+  |<#F3E5F5>                     | Eureka Discovery                 |
+  |<#E8EAF6>                     | Kafka Messaging                  |
+endlegend
+
+@enduml

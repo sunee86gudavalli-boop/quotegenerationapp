@@ -1,0 +1,108 @@
+@startuml Wireframe_Step4_Coverage
+salt
+
+{+
+  {/ Step 1: Customer | Step 2: Vehicle | Step 3: Driver | <b>Step 4: Coverage</b> | Step 5: Quote }
+
+  .
+  <b>BRISTOL WEST AUTO INSURANCE</b>
+  <i>Get Your Free Auto Quote in Minutes</i>
+  .
+
+  {+ <b>Step 4 of 5 — Select Your Coverage</b>
+
+    .
+    {
+      {
+        <i>Choose the coverage plan that fits your needs</i>
+        .
+
+        {+ Liability Only
+          (X) <b>Liability Only</b>
+          .
+          Covers damage or injury you cause to others.
+          Required by law in most states.
+          .
+          Bodily Injury Liability  | $25,000 / $50,000
+          Property Damage          | $10,000
+        }
+
+        .
+
+        {+ Standard Coverage
+          () <b>Standard (Liability + Collision)</b>
+          .
+          Everything in Liability, plus covers damage
+          to your own vehicle in an accident.
+          .
+          Collision Deductible     | ^ $500 ^
+        }
+
+        .
+
+        {+ Full Coverage
+          () <b>Full Coverage (Liability + Collision + Comprehensive)</b>
+          .
+          Complete protection — includes damage from
+          weather, theft, fire, and non-collision events.
+          .
+          Collision Deductible     | ^ $500 ^
+          Comprehensive Deductible | ^ $250 ^
+        }
+
+        .
+        <i>* Coverage selection required</i>
+      }
+
+      |
+
+      {+ <b>Real-Time Price Preview</b>
+
+        .
+        <i>Updates as you select options</i>
+        .
+        --<i>Your Risk Profile</i>--
+        .
+        Driver Age               | 34 yrs
+        Violations               | 0
+        Accidents                | 0
+        Vehicle                  | 2022 Camry
+        Annual Mileage           | ~12,500
+        .
+        --<i>Adjusted Base Premium</i>--
+        .
+        Base Premium             | $ 800.00
+        Age Factor               | No change
+        Violation Surcharge      | $ 0.00
+        Accident Surcharge       | $ 0.00
+        Mileage Factor           | No change
+        .
+        --                       | --
+        <b>Adjusted Base</b>     | <b>$ 800.00</b>
+        .
+        --<i>Selected Coverage Cost</i>--
+        .
+        Liability (40%)          | <b>$ 320.00</b>
+        Collision (35%)          | <color:grey>not selected</color>
+        Comprehensive (25%)      | <color:grey>not selected</color>
+        .
+        ==                       | ==
+        <b>Estimated Total</b>   | <b>$ 320.00 / yr</b>
+        <b>Monthly Estimate</b>  | <b>$  26.67 / mo</b>
+        .
+        <i>Price updates instantly</i>
+        <i>when you change coverage</i>
+        <i>or deductible options</i>
+        .
+      }
+    }
+    .
+  }
+
+  .
+  {
+    [ ← Back ] | . | . | [ Get My Quote →  ]
+  }
+}
+
+@enduml

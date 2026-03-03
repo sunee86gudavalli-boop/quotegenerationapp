@@ -1,0 +1,44 @@
+@startuml Wireframe_Step2_VehicleInfo
+salt
+
+{+
+  {/ Step 1: Customer | <b>Step 2: Vehicle</b> | Step 3: Driver | Step 4: Coverage | Step 5: Quote }
+
+  .
+  <b>BRISTOL WEST AUTO INSURANCE</b>
+  <i>Get Your Free Auto Quote in Minutes</i>
+  .
+
+  {+ <b>Step 2 of 5 — Vehicle Information</b>
+
+    .
+    {
+      <b>Year</b> *             | ^ 2022            ^ | <b>Make</b> *             | ^ Toyota          ^
+    }
+    {
+      <b>Model</b> *            | ^ Camry            ^ | <b>Body Type</b>          | ^ Sedan           ^
+    }
+    {
+      <b>VIN</b>                | "1HGBH41JXMN109186            "
+    }
+    {
+      <b>Primary Use</b> *      | ^ Personal         ^
+    }
+    {
+      <b>Annual Mileage</b> *   | ^ 10,000 - 15,000  ^
+    }
+    {
+      <b>Garaging ZIP Code</b> *| "33601  "
+    }
+    .
+    <i>* Required fields</i>
+    .
+  }
+
+  .
+  {
+    [ ← Back ] | . | . | [ Next →  ]
+  }
+}
+
+@enduml

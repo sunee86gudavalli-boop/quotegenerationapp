@@ -1,0 +1,85 @@
+@startuml BristolWest_CreateQuote_Part1
+
+title Bristol West — Create a Quote\nPart 1 of 2 : Quote Request & Data Collection
+
+top to bottom direction
+
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam actorStyle awesome
+
+skinparam usecase {
+  BackgroundColor   #E6F4EA
+  BorderColor       #2E7D32
+  FontColor         #1B5E20
+  ArrowColor        #555555
+}
+
+skinparam actor {
+  BackgroundColor   #DDEEFF
+  BorderColor       #336699
+  FontColor         #003366
+}
+
+skinparam note {
+  BackgroundColor   #FFFDE7
+  BorderColor       #F9A825
+}
+
+' ─────────────────────────────
+' ACTORS
+' ─────────────────────────────
+actor "Customer"         as CUSTOMER
+actor "Customer Service" as CUST_SVC  #E6F4EA
+actor "Vehicle Service"  as VEH_SVC   #E6F4EA
+actor "Driver Service"   as DRV_SVC   #E6F4EA
+
+' ─────────────────────────────
+' SYSTEM BOUNDARY
+' ─────────────────────────────
+rectangle "Quote Service — Data Collection Phase" #FFF9F0 {
+
+  usecase "1. Submit Quote Request\n(5-step wizard payload)" as UC1
+  usecase "2. Validate Quote Request\n(required fields, formats)" as UC2
+  usecase "3. Save Customer Info"   as UC3
+  usecase "4. Save Vehicle Info"    as UC4
+  usecase "5. Save Driver Info"     as UC5
+
+}
+
+' ─────────────────────────────
+' FLOW
+' ─────────────────────────────
+CUSTOMER --> UC1
+
+UC1 .down.> UC2 : <<include>>
+UC2 .down.> UC3 : <<include>>
+UC3 .down.> UC4 : <<include>>
+UC4 .down.> UC5 : <<include>>
+
+UC3 --> CUST_SVC : Feign REST\nPOST /api/customers
+UC4 --> VEH_SVC  : Feign REST\nPOST /api/vehicles
+UC5 --> DRV_SVC  : Feign REST\nPOST /api/drivers
+
+' ─────────────────────────────
+' NOTES
+' ─────────────────────────────
+note right of UC1
+  Payload includes:
+  customer, vehicle,
+  driver & coverage data
+end note
+
+note right of UC2
+  Validates: name, DOB,
+  VIN format, license #,
+  coverage type
+end note
+
+note bottom of UC5
+  Continues in Part 2:
+  Premium Calculation
+  & Quote Finalization
+end note
+
+@enduml

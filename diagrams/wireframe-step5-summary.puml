@@ -1,0 +1,55 @@
+@startuml Wireframe_Step5_QuoteSummary
+salt
+
+{+
+  {/ Step 1: Customer | Step 2: Vehicle | Step 3: Driver | Step 4: Coverage | <b>Step 5: Quote</b> }
+
+  .
+  <b>BRISTOL WEST AUTO INSURANCE</b>
+  .
+
+  {+ <b>Step 5 of 5 — Your Quote is Ready!</b>
+
+    .
+    <i>A confirmation has been sent to john.doe@email.com</i>
+    .
+
+    {+ Quote Details
+      Quote Number   | <b>BW-2026-004821</b>
+      Customer       | John Doe
+      Vehicle        | 2022 Toyota Camry
+      Coverage       | <b>Full Coverage</b>
+      Valid Until    | 04 / 01 / 2026
+    }
+
+    .
+
+    {+ Premium Breakdown
+      <b>Coverage Item</b>        | <b>Annual Premium</b>
+      Liability                   | $  448.00
+      Collision                   | $  392.00
+      Comprehensive               | $  280.00
+      --                          | --
+      <b>Total Premium</b>        | <b>$ 1,120.00</b>
+      <b>Monthly Estimate</b>     | <b>$    93.33</b>
+    }
+
+    .
+
+    {+ What Happens Next?
+      <i>1. Review your quote details above</i>
+      <i>2. Click Accept Quote to bind your policy</i>
+      <i>3. A Bristol West agent will contact you</i>
+      <i>   within 1 business day to finalize</i>
+    }
+
+    .
+  }
+
+  .
+  {
+    [ ← Start Over ] | . | . | [ Accept Quote →  ]
+  }
+}
+
+@enduml

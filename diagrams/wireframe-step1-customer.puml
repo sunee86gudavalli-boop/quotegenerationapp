@@ -1,0 +1,41 @@
+@startuml Wireframe_Step1_CustomerInfo
+salt
+
+{+
+  {/ <b>Step 1: Customer</b> | Step 2: Vehicle | Step 3: Driver | Step 4: Coverage | Step 5: Quote }
+
+  .
+  <b>BRISTOL WEST AUTO INSURANCE</b>
+  <i>Get Your Free Auto Quote in Minutes</i>
+  .
+
+  {+ <b>Step 1 of 5 — Customer Information</b>
+
+    .
+    {
+      <b>First Name</b> *       | "John                 " | <b>Last Name</b> *        | "Doe                  "
+    }
+    {
+      <b>Date of Birth</b> *    | "01 / 15 / 1990        " | <b>Phone</b>              | "(555) 123-4567       "
+    }
+    {
+      <b>Email Address</b> *    | "john.doe@email.com                                  "
+    }
+    {
+      <b>Street Address</b>     | "123 Main Street                                     "
+    }
+    {
+      <b>City</b> *             | "Tampa            " | <b>State</b> * | ^ FL      ^ | <b>ZIP</b> * | "33601  "
+    }
+    .
+    <i>* Required fields</i>
+    .
+  }
+
+  .
+  {
+    . | . | . | [ Next →  ]
+  }
+}
+
+@enduml

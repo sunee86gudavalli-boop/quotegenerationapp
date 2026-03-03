@@ -1,0 +1,78 @@
+@startuml Wireframe_Step3_DriverInfo
+salt
+
+{+
+  {/ Step 1: Customer | Step 2: Vehicle | <b>Step 3: Driver</b> | Step 4: Coverage | Step 5: Quote }
+
+  .
+  <b>BRISTOL WEST AUTO INSURANCE</b>
+  <i>Get Your Free Auto Quote in Minutes</i>
+  .
+
+  {+ <b>Step 3 of 5 — Driver Information</b>
+
+    .
+    {
+      {
+        {
+          <b>License Number</b> *   | "D123-456-78-901-0         " | <b>License State</b> * | ^ FL ^
+        }
+        {
+          <b>Years Licensed</b> *   | ^ 10 years          ^
+        }
+        .
+        --<i>Driving History (past 3 years)</i>--
+        .
+        {
+          <b>Moving Violations</b>  | ^ 0                 ^
+        }
+        {
+          <b>At-Fault Accidents</b> | ^ 0                 ^
+        }
+        .
+        {
+          [] <b>SR-22 Filing Required?</b>
+        }
+        {
+          [] <b>DUI / DWI in past 5 years?</b>
+        }
+        .
+        <i>* Required fields</i>
+      }
+
+      |
+
+      {+ <b>Live Price Impact</b>
+
+        .
+        <i>Estimated Base Premium</i>
+        .
+        Base Premium             | <b>$ 800.00</b>
+        .
+        --<i>Surcharges Applied</i>--
+        .
+        Young Driver (<25)       | <color:grey>$ 0.00</color>
+        Moving Violations        | <color:grey>$ 0.00</color>
+        At-Fault Accidents       | <color:grey>$ 0.00</color>
+        SR-22 Filing             | <color:grey>$ 0.00</color>
+        DUI / DWI                | <color:grey>$ 0.00</color>
+        .
+        --                       | --
+        <b>Adjusted Base</b>     | <b>$ 800.00</b>
+        .
+        <i>Final premium depends on</i>
+        <i>coverage selection in Step 4</i>
+        .
+
+      }
+    }
+    .
+  }
+
+  .
+  {
+    [ ← Back ] | . | . | [ Next →  ]
+  }
+}
+
+@enduml

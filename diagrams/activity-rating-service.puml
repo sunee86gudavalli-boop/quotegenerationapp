@@ -1,0 +1,200 @@
+@startuml BristolWest_RatingService_ActivityDiagram
+
+title Bristol West (Farmers Insurance)\nActivity Diagram — Rating Service\nPremium Calculation (Real-Time + Final Quote)
+
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam activityDiamondBackgroundColor #FFF3CC
+skinparam activityDiamondBorderColor     #CC9900
+skinparam activityDiamondFontColor       #664400
+
+skinparam activity {
+  BackgroundColor  #E6F4EA
+  BorderColor      #2E7D32
+  FontColor        #1B5E20
+  ArrowColor       #444444
+  StartColor       #1B5E20
+  EndColor         #1B5E20
+}
+
+skinparam note {
+  BackgroundColor  #FFFDE7
+  BorderColor      #F9A825
+  FontColor        #333333
+}
+
+skinparam swimlane {
+  BorderColor      #888888
+  TitleBackgroundColor #F0F4F8
+  TitleFontColor   #333333
+  TitleFontStyle   bold
+}
+
+' ═══════════════════════════════════════════════════
+' SWIM LANES
+' ═══════════════════════════════════════════════════
+
+|React Frontend|
+start
+
+' ─────────────────────────────
+' TRIGGER — User Interaction
+' ─────────────────────────────
+:User updates input on Step 3 or Step 4\n(violations, accidents, coverage type\nor deductible changes);
+
+:Debounce timer starts (300ms)\nto avoid excessive API calls;
+
+note right
+  Triggered on:
+  • Violation count change (Step 3)
+  • Accident count change (Step 3)
+  • Coverage type change (Step 4)
+  • Deductible change (Step 4)
+end note
+
+:Send real-time preview request\nGET /api/rating/preview\n(partial risk data);
+
+' ─────────────────────────────
+' RATING SERVICE — REAL-TIME
+' ─────────────────────────────
+|Rating Service|
+
+:Receive RatingPreviewRequestDTO\n(driverAge, violations, accidents,\nvehicleYear, mileage, coverageType);
+
+' ─────────────────────────────
+' VALIDATION
+' ─────────────────────────────
+if (Request valid?\n(age > 0, mileage > 0)) then (yes)
+else (no)
+  #FBE9E7:Return 400 Bad Request\n(validation error);
+  |React Frontend|
+  #FBE9E7:Show inline validation\nerror on form field;
+  stop
+endif
+
+' ─────────────────────────────
+' BASE PREMIUM
+' ─────────────────────────────
+:Set Base Premium = $800.00;
+
+' ─────────────────────────────
+' DRIVER AGE FACTOR
+' ─────────────────────────────
+if (Driver Age < 25?) then (yes)
+  :Apply Young Driver Surcharge\nBase Premium × 1.40;
+elseif (Driver Age > 70?) then (yes)
+  :Apply Senior Driver Surcharge\nBase Premium × 1.20;
+else (18–70)
+  :No Age Adjustment;
+endif
+
+' ─────────────────────────────
+' VIOLATIONS SURCHARGE
+' ─────────────────────────────
+if (Violations > 0?) then (yes)
+  :Add Violation Surcharge\n+$150 per violation;
+else (no)
+  :No Violation Surcharge;
+endif
+
+' ─────────────────────────────
+' ACCIDENTS SURCHARGE
+' ─────────────────────────────
+if (Accidents > 0?) then (yes)
+  :Add Accident Surcharge\n+$200 per accident;
+else (no)
+  :No Accident Surcharge;
+endif
+
+' ─────────────────────────────
+' VEHICLE AGE DISCOUNT
+' ─────────────────────────────
+if (Vehicle Year\n< (Current Year - 10)?) then (yes)
+  :Apply Older Vehicle Discount\nBase Premium × 0.90;
+else (no)
+  :No Vehicle Age Adjustment;
+endif
+
+' ─────────────────────────────
+' MILEAGE SURCHARGE
+' ─────────────────────────────
+if (Annual Mileage\n> 15,000 miles?) then (yes)
+  :Apply High Mileage Surcharge\nBase Premium × 1.10;
+else (no)
+  :No Mileage Adjustment;
+endif
+
+' ─────────────────────────────
+' COVERAGE TYPE SPLIT
+' ─────────────────────────────
+:Liability Premium = Base × 40%;
+
+if (Coverage Type?) then (FULL)
+  :Collision Premium     = Base × 35%\nComprehensive Premium = Base × 25%;
+elseif (STANDARD) then (STANDARD)
+  :Collision Premium     = Base × 35%\nComprehensive Premium = $0.00;
+else (LIABILITY)
+  :Collision Premium     = $0.00\nComprehensive Premium = $0.00;
+endif
+
+:Total Premium =\nLiability + Collision + Comprehensive;
+
+' ─────────────────────────────
+' DETERMINE CALLER & RESPOND
+' ─────────────────────────────
+if (Request Source?) then (Real-Time\nfrom React UI)
+
+  :Build RatingPreviewDTO\n(adjustedBase, liabilityPremium,\ncollisionPremium, comprehensivePremium,\ntotalPremium, monthlyEstimate);
+
+  |React Frontend|
+  :Receive RatingPreviewDTO;
+  :Update Live Price Panel instantly\n— surcharge breakdown\n— coverage cost split\n— total & monthly estimate;
+
+  note right
+    Price panel refreshes
+    on every debounced
+    user input change
+  end note
+
+  if (User proceeds\nto next step?) then (yes)
+    :User clicks "Get My Quote →"\n(Step 4 complete);
+
+    ' ─────────────────────────────
+    ' FINAL QUOTE TRIGGER
+    ' ─────────────────────────────
+    |Quote Service|
+    :Feign POST /api/rating/calculate\n(full RatingRequestDTO\nwith all risk data);
+
+    |Rating Service|
+    :Receive final RatingRequestDTO\n(same calculation already cached\nin this session);
+
+    :Build final RatingResponseDTO\n(basePremium, liabilityPremium,\ncollisionPremium, comprehensivePremium,\ntotalPremium);
+
+    note right
+      Executes via
+      SimpleJdbcCall on
+      bristolwest_rating DB
+    end note
+
+    |Quote Service|
+    :Receive RatingResponseDTO\nProceed to Generate Quote Number;
+
+    stop
+
+  else (no — user\nkeeps editing)
+    :Return to form\nPrice panel stays updated;
+    stop
+  endif
+
+else (Final Quote\nfrom Quote Service)
+
+  :Build final RatingResponseDTO\n(basePremium, liabilityPremium,\ncollisionPremium, comprehensivePremium,\ntotalPremium);
+
+  |Quote Service|
+  :Receive RatingResponseDTO\nProceed to Generate Quote Number;
+
+  stop
+
+endif
+
+@enduml

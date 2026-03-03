@@ -1,0 +1,93 @@
+@startuml BristolWest_CreateQuote_Part2
+
+title Bristol West — Create a Quote\nPart 2 of 2 : Premium Calculation & Quote Finalization
+
+top to bottom direction
+
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam actorStyle awesome
+
+skinparam usecase {
+  BackgroundColor   #E6F4EA
+  BorderColor       #2E7D32
+  FontColor         #1B5E20
+  ArrowColor        #555555
+}
+
+skinparam actor {
+  BackgroundColor   #DDEEFF
+  BorderColor       #336699
+  FontColor         #003366
+}
+
+skinparam note {
+  BackgroundColor   #FFFDE7
+  BorderColor       #F9A825
+}
+
+' ─────────────────────────────
+' ACTORS
+' ─────────────────────────────
+actor "Customer"             as CUSTOMER
+actor "Rating Service"       as RATING_SVC  #E6F4EA
+actor "Notification Service" as NOTIF_SVC   #E8EAF6
+
+' ─────────────────────────────
+' SYSTEM BOUNDARY
+' ─────────────────────────────
+rectangle "Quote Service — Quote Finalization Phase" #FFF9F0 {
+
+  usecase "5. Save Driver Info\n(continued from Part 1)" as UC5
+  usecase "6. Calculate Premium"        as UC6
+  usecase "7. Generate Quote Number"    as UC7
+  usecase "8. Persist Quote to DB"      as UC8
+  usecase "9. Publish Quote Event"      as UC9
+  usecase "10. Return Quote to Customer" as UC10
+
+}
+
+' ─────────────────────────────
+' FLOW
+' ─────────────────────────────
+UC5  .down.> UC6  : <<include>>
+UC6  .down.> UC7  : <<include>>
+UC7  .down.> UC8  : <<include>>
+UC8  .down.> UC9  : <<include>>
+UC9  .down.> UC10 : <<include>>
+
+UC6  --> RATING_SVC  : Feign REST\nPOST /api/rating/calculate
+UC9  --> NOTIF_SVC   : Kafka event\n(quote-generated)
+UC10 --> CUSTOMER    : QuoteResponseDTO\n(quote # + premium breakdown)
+
+' ─────────────────────────────
+' NOTES
+' ─────────────────────────────
+note right of UC6
+  Risk factors applied:
+  driver age, violations,
+  vehicle year, mileage,
+  coverage type, ZIP
+  via MySQL stored procedure
+end note
+
+note right of UC7
+  Format: BW-YYYY-XXXXXX
+  e.g. BW-2026-004821
+end note
+
+note right of UC9
+  Topic: quote-generated
+  Notification Service
+  sends email to customer
+end note
+
+note right of UC10
+  Response includes:
+  - Quote number
+  - Coverage type
+  - Premium breakdown
+  - Expiry date (30 days)
+end note
+
+@enduml
