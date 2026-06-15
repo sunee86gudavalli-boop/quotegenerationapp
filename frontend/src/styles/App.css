@@ -1,0 +1,497 @@
+/* Bristol West Brand Colors: Navy Blue #003087, Gold #FFB81C, White */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+/* ─── APP LAYOUT ─── */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 1rem;
+}
+
+/* ─── HEADER ─── */
+.header {
+  background-color: #003087;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo img {
+  height: 40px;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
+  font-size: 0.85rem;
+  color: #FFB81C;
+  font-weight: 500;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  background-color: #003087;
+  color: #ccc;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+/* ─── WIZARD CONTAINER ─── */
+.wizard-container {
+  max-width: 780px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 48, 135, 0.12);
+  overflow: hidden;
+}
+
+.wizard-header {
+  background: linear-gradient(135deg, #003087 0%, #004DB3 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+}
+
+.wizard-header h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.wizard-header p {
+  font-size: 0.9rem;
+  color: #a8c0e8;
+}
+
+.wizard-body {
+  padding: 2rem;
+}
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.progress-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+  z-index: 0;
+}
+
+.progress-step.completed:not(:last-child)::after {
+  background-color: #003087;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #e0e7ff;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #999;
+  position: relative;
+  z-index: 1;
+}
+
+.progress-step.active .step-circle {
+  background-color: #003087;
+  border-color: #003087;
+  color: white;
+}
+
+.progress-step.completed .step-circle {
+  background-color: #003087;
+  border-color: #003087;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.72rem;
+  color: #999;
+  margin-top: 0.4rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.progress-step.active .step-label,
+.progress-step.completed .step-label {
+  color: #003087;
+  font-weight: 600;
+}
+
+/* ─── FORM FIELDS ─── */
+.form-section {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #003087;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e8ecf0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row.three-col {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-row.single {
+  grid-template-columns: 1fr;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 0.4rem;
+}
+
+.form-field label .required {
+  color: #e53e3e;
+  margin-left: 2px;
+}
+
+.form-field input,
+.form-field select {
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+  transition: border-color 0.2s;
+  background: #fafbfc;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: #003087;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.1);
+}
+
+.form-field .error-msg {
+  font-size: 0.78rem;
+  color: #e53e3e;
+  margin-top: 0.25rem;
+}
+
+/* ─── COVERAGE OPTIONS ─── */
+.coverage-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.coverage-card {
+  border: 2px solid #d0d7de;
+  border-radius: 10px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.coverage-card:hover {
+  border-color: #003087;
+  background: #f0f4ff;
+}
+
+.coverage-card.selected {
+  border-color: #003087;
+  background: #e8f0ff;
+}
+
+.coverage-card input[type="radio"] {
+  margin-top: 4px;
+  accent-color: #003087;
+  width: 18px;
+  height: 18px;
+}
+
+.coverage-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #003087;
+  margin-bottom: 0.25rem;
+}
+
+.coverage-info p {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.coverage-badge {
+  display: inline-block;
+  background: #FFB81C;
+  color: #003087;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 0.5rem;
+}
+
+/* ─── BUTTONS ─── */
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e8ecf0;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #003087;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #002070;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 48, 135, 0.3);
+}
+
+.btn-primary:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #f0f4ff;
+  color: #003087;
+  border: 2px solid #003087;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e7ff;
+}
+
+/* ─── QUOTE SUMMARY ─── */
+.quote-summary {
+  text-align: center;
+}
+
+.quote-success-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.quote-success h2 {
+  font-size: 1.6rem;
+  color: #003087;
+  margin-bottom: 0.5rem;
+}
+
+.quote-number {
+  display: inline-block;
+  background: #003087;
+  color: white;
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.premium-breakdown {
+  background: linear-gradient(135deg, #003087 0%, #004DB3 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.premium-breakdown h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #a8c0e8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.premium-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.95rem;
+}
+
+.premium-line:last-child {
+  border-bottom: none;
+}
+
+.premium-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid rgba(255,255,255,0.3);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFB81C;
+}
+
+.quote-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.meta-card {
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: left;
+}
+
+.meta-card .meta-label {
+  font-size: 0.78rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.meta-card .meta-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.email-notice {
+  background: #e8f5e9;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  color: #2e7d32;
+  margin: 1rem 0;
+}
+
+/* ─── LOADING ─── */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #e0e7ff;
+  border-top: 5px solid #003087;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── ERROR ─── */
+.error-banner {
+  background: #fff5f5;
+  border: 1px solid #fc8181;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #c53030;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .form-row.three-col {
+    grid-template-columns: 1fr;
+  }
+  .quote-meta {
+    grid-template-columns: 1fr;
+  }
+  .wizard-body {
+    padding: 1.25rem;
+  }
+}
