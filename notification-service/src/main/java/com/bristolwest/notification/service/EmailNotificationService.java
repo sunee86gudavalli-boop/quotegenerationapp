@@ -3,6 +3,7 @@ package com.bristolwest.notification.service;
 import com.bristolwest.notification.dto.QuoteGeneratedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,14 @@ public class EmailNotificationService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
     public void sendQuoteEmail(QuoteGeneratedEvent event) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(event.getCustomerEmail());
-            message.setFrom("noreply@bristolwest.com");
+            message.setFrom(fromEmail);
             message.setSubject("Your Bristol West Auto Insurance Quote - " + event.getQuoteNumber());
             message.setText(buildEmailBody(event));
             mailSender.send(message);
