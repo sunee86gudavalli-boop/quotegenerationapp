@@ -5,7 +5,7 @@ spring:
   application:
     name: customer-service
   datasource:
-    url: jdbc:mysql://localhost:3306/bristolwest_customer?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3307/bristolwest_customer?createDatabaseIfNotExist=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver

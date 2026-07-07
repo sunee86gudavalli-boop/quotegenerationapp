@@ -5,7 +5,7 @@ spring:
   application:
     name: quote-service
   datasource:
-    url: jdbc:mysql://localhost:3306/bristolwest_quote?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3307/bristolwest_quote?createDatabaseIfNotExist=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver

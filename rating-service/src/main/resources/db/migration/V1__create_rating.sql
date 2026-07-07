@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS rating_factors (
   id           BIGINT AUTO_INCREMENT PRIMARY KEY,
   factor_name  VARCHAR(100),
   factor_key   VARCHAR(100),
-  factor_value DECIMAL(5,3),
+  factor_value DECIMAL(10,3),
   description  VARCHAR(255)
 );
 
